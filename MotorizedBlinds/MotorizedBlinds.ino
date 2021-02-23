@@ -31,14 +31,17 @@ void wifiSetup() {
   Serial.printf("[WIFI] Connecting to %s ", WIFI_SSID);
   WiFi.begin(WIFI_SSID, WIFI_PASS);
 
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED) { // Connect to wifi
     Serial.print(".");
     delay(100);
   }
+  
+  WiFi.setSleep(false); // Keep Wifi awake for webserver to work!
 
   Serial.println();
   Serial.printf("[WIFI] STATION Mode, SSID: %s, IP address: %s\n", WiFi.SSID().c_str(), WiFi.localIP().toString().c_str());
 
+  // Webserver routes
   server.on("/", handle_OnConnect);
   server.on("/moveup", handle_moveup);
   server.on("/movedown", handle_movedown);
@@ -61,6 +64,7 @@ void setup() {
       delay(10);
     }
   }
+  
   for (int i = 0; i < globalAvgNumReadings; i++) {
     measurements[i] = 0;
   }
@@ -99,6 +103,7 @@ void loop() {
   }
 
   if (digitalRead(MOTOR_DIR_UP) == HIGH || digitalRead(MOTOR_DIR_DOWN) == HIGH) { // If motor is running then measure current
+    // Current measurement needs to be reworked
     float measuredCurrent = measureSmoothCurrent(); // Measure current at an instance
     int i = currentMeasurement;
     measurements[i] = measuredCurrent;
@@ -191,8 +196,7 @@ String SendHTML(){
   } else {
     ptr +="<p>Current Status: Stopped</p><a class=\"button button-off\" href=\"/moveup\">UP</a>\n";
     ptr +="<a class=\"button button-on\" href=\"/stop\">STOP</a>\n";
-    ptr +="
-    <a class=\"button button-off\" href=\"/movedown\">DOWN</a>\n";
+    ptr +="<a class=\"button button-off\" href=\"/movedown\">DOWN</a>\n";
   }
 
   ptr +="</body>\n";
