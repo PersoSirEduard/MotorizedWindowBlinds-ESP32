@@ -15,7 +15,7 @@
 
 const int numReadings = 10; // Iterations for a measurement of current
 const int globalAvgNumReadings = 20; // Iterations for average measurement of current
-const float currentThreshold = 230;
+const float currentThreshold = 230; // in mA
 
 float measurements[globalAvgNumReadings];
 float currentMeasurement = 0;
